@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{svg}
+
+\title{An Investigation into Alternative Pulse Shapes for the Orhtogonalized FTN Receiver Architecture}
+\author{Michael Yuhas}
+\date{July 2017}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+In [1], an alternative receiver architecture for an FTN system was proposed.  This architecture sampled the incoming signal at a higher rate, but rather than using a matched filter, it used a pulse shape that served as an orthonormal basis function for all received pulses from all received FTN streams on the time interval $[0,T/k]$ where $k$ is the number of FTN streams and $T$ is the pulse period.  This had the advantage of providing samples with decorrelated noise at the receiver output, and in addition, required fewer components to manufacture.  However, this receiver sufferred from a crucial flaw; it was only able to operate using rectangular pulses.  While rectangular pulses are used in some applications [2], such a receiver should have the flexibility to allow use of any pulse shape.
+\par
+In this paper, we will put forward a method for adapting the orthogonalized FTN receiver to demodulate any real, continuous-time pulse by decomposing all possible received signals within a given period.  Furthermore, we will use this method to determine such a receiver structure for sinc pulses and root-raised cosine pulses with any number of FTN streams.  We will also look at receivers for demodulating FTN signals encoded using CDMA spread-spectrum.  Lastly, the capacities of these receivers will be derived and compared with the results in [1].
+\section{Derivation of a Generalized Orthogonalized FTN Receiver}
+Figure 1 shows the proposed receiver architecture for demodulation of FTN with generalized pulse shapes.
+\begin{figure}[htbp]
+  \centering
+  \includesvg[width=1.0\textwidth]{fig1}
+  \caption{Block Diagram of the Generalized Orthogonalized Receiver}
+\end{figure}
+
+\end{document}
