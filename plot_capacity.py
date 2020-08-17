@@ -112,8 +112,50 @@ def thesis_figure_9() -> None:
     pyplot.show()
 
 
+
+def thesis_figure_11() -> None:
+    line_styles = ['+-r', '*-b', '*--b', 'x-c', 'x--c', '+-m', '+--m', 'x-g',
+                   'x--g']
+    system_configs = [(2, 2), (4, 4), (6, 6), (8, 8)]
+    plot = pyplot.subplot(111)
+    plot.plot(
+        SNRS,
+        numpy.log2(1 + SNRS),
+        line_styles[0],
+        markerfacecolor='none')
+    for index, config in enumerate(system_configs):
+        plot.plot(
+            SNRS,
+            simulate_capacity.mimo_csir_capacity(
+                nt=config[0],
+                nr=config[1],
+                iterations=1000,
+                snrs=SNRS),
+            line_styles[index],
+            markerfacecolor='none')
+        plot.plot(
+            SNRS,
+            simulate_capacity.mimo_csit_capacity(
+                nt=config[0],
+                nr=config[0],
+                iterations=1000,
+                snrs=SNRS),
+            line_styles[index],
+            markerfacecolor='none')
+    plot.spines['right'].set_visible(False)
+    plot.spines['top'].set_visible(False)
+    pyplot.ylabel('Capacity (Bits / Sec / Hz)')
+    pyplot.ylim(0, 45)
+    pyplot.xlabel('SNR (dB)')
+    pyplot.legend(['SISO', '2x2 MIMO CSIR', '2x2 MIMO CSIT', '4x4 MIMO CSIR',
+                   '4x4 MIMO CSIT', '6x6 MIMO CSIR', '6x6 MIMO CSIT',
+                   '8x8 MIMO CSIR', '8x8 MIMO CSIT'])
+    pyplot.show()
+
+
 if __name__ == '__main__':
     #thesis_figure_6()
     #thesis_figure_7()
     #thesis_figure_8()
-    thesis_figure_9()
+    #thesis_figure_9()
+    thesis_figure_11()

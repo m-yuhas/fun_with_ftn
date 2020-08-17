@@ -73,11 +73,44 @@ def mimo_csir_capacity(nt: int,
     return capacities / iterations
 
 
+
+def mimo_csit_capacity(nt: int,
+                       nr: int,
+                       iterations: int,
+                       snrs: numpy.ndarray) -> numpy.ndarray:
+    capacities = numpy.zeros(snrs.size)
+    for i in range(iterations):
+        channel_matrix = numpy.random.normal(loc=0, scale=1, size=(nr, nt))
+        _, s, _ = numpy.linalg.svd(channel_matrix)
+        it = numpy.nditer(snrs, flags=['f_index']) 
+        for snr in it:
+            power_allocations = water_filling(s, snr)
+            sig_sq = 1 / (numpy.power(10, snr / 10))
+            capacities[it.index] += numpy.sum(
+                numpy.log2(1 + (s ** 2) * power_allocations / sig_sq))
+    return capacities / iterations
+
+
+def water_filling(singular_values: numpy.ndarray,
+                  snr: float) -> numpy.ndarray:
+    sig_sq = 1 / (numpy.power(10, snr / 10))
+    singular_values.sort()
+    power_allocation = numpy.zeros(singular_values.size)
+    for i, sig_i in enumerate(range(singular_values.size)):
+        water_level = (1 + sig_sq * numpy.sum(1 / singular_values ** 2)) \
+            / (singular_values.size - i)
+        if water_level - (sig_sq / (sig_i ** 2)) >= 0:
+            power_allocation[i:] = water_level - \
+                (sig_sq / (singular_values[i:] ** 2))
+            return power_allocation 
+
+
 def simulate_capacity(save_file: str) -> None:
     capacity = numpy.zeros((
         numpy.ceil((SNR_MAX - SNR_MIN + 1) / SNR_INC),
         numpy.ceil((NT_MAX - NT_MIN + 1) / NT_INC),
         numpy.ceil((FTN_MAX - FTN_MIN + 1) / FTN_INC)))
+
 
 if __name__ == '__main___':
     simulate_capacity()
