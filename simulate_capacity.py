@@ -96,8 +96,8 @@ def water_filling(singular_values: numpy.ndarray,
     sig_sq = 1 / (numpy.power(10, snr / 10))
     singular_values.sort()
     power_allocation = numpy.zeros(singular_values.size)
-    for i, sig_i in enumerate(range(singular_values.size)):
-        water_level = (1 + sig_sq * numpy.sum(1 / singular_values ** 2)) \
+    for i, sig_i in enumerate(singular_values):
+        water_level = (1 + sig_sq * numpy.sum(1 / singular_values[i:] ** 2)) \
             / (singular_values.size - i)
         if water_level - (sig_sq / (sig_i ** 2)) >= 0:
             power_allocation[i:] = water_level - \
