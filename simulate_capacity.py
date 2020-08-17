@@ -55,7 +55,6 @@ def toeplitz(row: numpy.ndarray) -> numpy.ndarray:
     return horizontal + vertical - numpy.identity(row.size)
 
 
-
 def mimo_csir_capacity(nt: int,
                        nr: int,
                        iterations: int,
@@ -89,6 +88,16 @@ def mimo_csit_capacity(nt: int,
             capacities[it.index] += numpy.sum(
                 numpy.log2(1 + (s ** 2) * power_allocations / sig_sq))
     return capacities / iterations
+
+
+def ftn_capacity(ftn_streams: int,
+                 packet_size: int,
+                 snrs: numpy.ndarray) -> numpy.ndarray:
+    row = numpy.zeros(ftn_streams * packet_size)
+    row[0:ftn_streams] = numpy.arange(ftn_streams, 0, -1) / ftn_streams
+    channel_matrix = (1 / numpy.sqrt(ftn_streams)) * toeplitz(row)
+    return (1 / packet_size) * numpy.log2(numpy.linalg.det(
+        numpy.identity(row.size) + (channel_matrix * numpy.power(10, snr / 10))))
 
 
 def water_filling(singular_values: numpy.ndarray,
