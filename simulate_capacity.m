@@ -7,15 +7,26 @@ nrs = 1:1:10
 ns = 100:1:100
 ks = 1:1:10
 
-capacties = zeros(size(snrs, 2), size(nts, 2), size(nrs, 2), size(ns, 2), size(ks, 2));
-for snr_idx = 1:size(snrs, 2)
+capacties = zeros(size(snrs, 2), ...
+    size(nts, 2), ...
+    size(nrs, 2), ...
+    size(ns, 2), ...
+    size(ks, 2));
+params = vector_perms(nts, nrs, ns, ks)
+for p = 1:size(params, 1)
+    nt = params(p:1);
+    nr = params(p:2);
+    n = params(p:3);
+    k = params(p:4);
     for inst = 1:cm_instances
-        H = channel_gen(n_t, n_r, k, n, 'ray', 'rect');
-        for nt_idx = 1:size(nts, 2)
-	    for n:
+        H = channel_gen(nt, nr, k, n, 'ray', 'rect');
+        for snr = 1:size(snrs, 2)
+            svals = svd(eye(n_t * k * n, n_r * k * n) + 10 ^ (snr / 10) * H);
+	    sum_log_eigen = sum(log2(svals .^2))
+            capacities(snr, nt, nr, n, k) = inv(nt + (k - 1) / k) * sum_log_eigen;
+        end
+    end
+end
+capacities = capacities / cm_instances;
 
-sigsq = 10 ^ (-snr / 10);
-capacities = inv(n + (k - 1) / k) * sum(log2(abs(eig(eye(n_t * k * n, n_r * k * n) + H / sigsq))));
-
-save('capacities.mat')
 end
